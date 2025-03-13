@@ -1,12 +1,12 @@
 const Sidebar = ({ selectedLanguage, onLanguageSelect }) => {
   const languages = [
-    { id: 'javascript', name: 'JavaScript', icon: '⚡' },
-    { id: 'python', name: 'Python', icon: '🐍' },
-    { id: 'html', name: 'HTML', icon: '🌐' },
-    { id: 'css', name: 'CSS', icon: '🎨' },
-    { id: 'java', name: 'Java', icon: '☕' },
-    { id: 'cpp', name: 'C++', icon: '⚙️' },
-    { id: 'ruby', name: 'Ruby', icon: '💎' }
+    { id: 'javascript', name: 'JavaScript', icon: '⚡', supported: true },
+    { id: 'python', name: 'Python', icon: '🐍', supported: true },
+    { id: 'html', name: 'HTML', icon: '🌐', supported: true },
+    { id: 'css', name: 'CSS', icon: '🎨', supported: true },
+    { id: 'java', name: 'Java', icon: '☕', supported: true },
+    { id: 'cpp', name: 'C++', icon: '⚙️', supported: false },
+    { id: 'ruby', name: 'Ruby', icon: '💎', supported: false }
   ];
 
   return (
@@ -18,17 +18,23 @@ const Sidebar = ({ selectedLanguage, onLanguageSelect }) => {
           <button
             key={lang.id}
             onClick={() => onLanguageSelect(lang.id)}
-            className={`w-16 p-3 rounded-lg flex flex-col items-center justify-center transition-all duration-300 ${
+            className={`w-16 p-3 rounded-lg flex flex-col items-center justify-center transition-all duration-300 relative ${
               selectedLanguage === lang.id
                 ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
                 : 'text-gray-400 hover:bg-gray-800 hover:text-white hover:shadow-md'
             }`}
-            title={`Switch to ${lang.name}`}
+            title={`${lang.name}${!lang.supported ? ' (Coming Soon)' : ''}`}
           >
             <span className={`text-2xl mb-1 transition-all duration-300 ${selectedLanguage === lang.id ? 'animate-pulse-subtle' : 'group-hover:scale-110'}`}>
               {lang.icon}
             </span>
             <span className="text-xs font-medium">{lang.name}</span>
+            
+            {!lang.supported && (
+              <span className="absolute -top-1 -right-1 text-[8px] px-1 py-0.5 bg-amber-500 text-black rounded-full font-bold">
+                SOON
+              </span>
+            )}
           </button>
         ))}
       </div>

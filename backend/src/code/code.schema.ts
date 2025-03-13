@@ -4,6 +4,7 @@ import { Document } from 'mongoose';
 export enum ProgrammingLanguage {
   PYTHON = 'python',
   JAVASCRIPT = 'javascript',
+  JAVA = 'java',
   // Add more languages here as needed
 }
 

@@ -3,8 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import CodeEditor from "./CodeEditor";
 import Sidebar from "./Sidebar";
-import InputField from "./InputField";
 import OutputBox from "./OutputBox";
+import InputField from "./InputField";
 import RunButton from "./RunButton";
 
 const Compiler = () => {
@@ -17,6 +17,17 @@ const Compiler = () => {
   const executeCode = async () => {
     try {
       setIsExecuting(true);
+      
+      // Check if language is supported for execution
+      const supportedLanguages = ['javascript', 'python', 'html', 'css', 'java'];
+      const isSupported = supportedLanguages.includes(language);
+      
+      if (!isSupported) {
+        setOutput(`The ${language.toUpperCase()} language execution is not yet implemented.\n\nCurrently supported languages:\n- JavaScript\n- Python\n- Java\n- HTML (preview)\n- CSS (preview)`);
+        setIsExecuting(false);
+        return;
+      }
+      
       setOutput("Executing code...");
       
       if (language === 'html' || language === 'css') {
@@ -156,6 +167,13 @@ print(f"Hello {name}, you are {age} years old.")`;
     transition: transform 0.3s ease;
 }`;
 
+      case "java":
+        return `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`;
+
       default:
         return "// Write your code here...";
     }
@@ -209,13 +227,12 @@ print(f"Hello {name}, you are {age} years old.")`;
                 </h2>
                 <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
                   {language === 'html' || language === 'css' ? (
-                    <div id="preview-container" className="bg-white h-[70vh]"></div>
+                    <div id="preview-container" className="bg-white h-[calc(100vh-12rem)]"></div>
                   ) : (
-                    <OutputBox 
-                      output={output}
-                      input={input}
-                      setInput={setInput}
-                    />
+                    <div className="grid grid-cols-2">
+                      <InputField input={input} setInput={setInput} />
+                      <OutputBox output={output} />
+                    </div>
                   )}
                 </div>
               </div>
