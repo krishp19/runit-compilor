@@ -229,7 +229,7 @@ print(f"Hello {name}, you are {age} years old.")`;
                   {language === 'html' || language === 'css' ? (
                     <div id="preview-container" className="bg-white h-[calc(100vh-12rem)]"></div>
                   ) : (
-                    <div className="grid grid-cols-2">
+                    <div className="flex flex-col space-y-4">
                       <InputField input={input} setInput={setInput} />
                       <OutputBox output={output} />
                     </div>

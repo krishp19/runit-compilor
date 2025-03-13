@@ -16,8 +16,8 @@ const OutputBox = ({ output }) => {
   const isError = output?.toLowerCase().includes('error');
 
   return (
-    <div className="bg-gray-900 text-white h-[calc(100vh-12rem)] flex flex-col">
-      <div className="flex-1">
+    <div className="bg-gray-900 text-white h-[calc(50vh-6rem)] flex flex-col">
+      <div className="flex flex-col h-full">
         <div className="p-2 bg-gray-800 text-sm text-gray-400 flex justify-between items-center">
           <span>Output</span>
           <div className="flex items-center space-x-2">
@@ -33,7 +33,7 @@ const OutputBox = ({ output }) => {
             </button>
           </div>
         </div>
-        <div className="h-[calc(100%-2.5rem)] p-4 font-mono overflow-auto whitespace-pre-wrap bg-gray-900">
+        <div className="flex-1 overflow-y-auto p-4 font-mono whitespace-pre-wrap bg-gray-900 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-800 [&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
           {output || 'No output yet...'}
         </div>
       </div>
