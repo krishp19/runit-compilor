@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import CodeEditor from "./CodeEditor";
-import LanguageSelector from "./LanguageSelector";
+import Sidebar from "./Sidebar";
 import InputField from "./InputField";
 import OutputBox from "./OutputBox";
 import RunButton from "./RunButton";
@@ -19,7 +19,32 @@ const Compiler = () => {
       setIsExecuting(true);
       setOutput("Executing code...");
       
-      // Split input by newlines and filter out empty lines
+      if (language === 'html' || language === 'css') {
+        // For HTML and CSS, we'll show the rendered output
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        
+        const content = language === 'html' 
+          ? code 
+          : `<html><head><style>${code}</style></head><body><div class="demo-element">Demo Element</div></body></html>`;
+        
+        setOutput('');
+        setTimeout(() => {
+          const outputContainer = document.querySelector('#preview-container');
+          if (outputContainer) {
+            outputContainer.innerHTML = '';
+            outputContainer.appendChild(iframe);
+            iframe.contentDocument.open();
+            iframe.contentDocument.write(content);
+            iframe.contentDocument.close();
+          }
+        }, 100);
+        return;
+      }
+
+      // For other languages, proceed with normal execution
       const formattedInput = input
         .split("\n")
         .filter(line => line.trim() !== "")
@@ -41,32 +66,112 @@ const Compiler = () => {
 
   // Example code templates
   const getDefaultCode = (lang) => {
-    if (lang === "javascript") {
-      return `const readline = require("readline");
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-rl.question("Enter your name: ", function (name) {
-  rl.question("Enter your age: ", function (age) {
-    console.log(\`Hello \${name}, you are \${age} years old.\`);
-    rl.close();
-  });
+    switch (lang) {
+      case "javascript":
+        return `customReadline.question("Enter your name: ", function(name) {
+    customReadline.question("Enter your age: ", function(age) {
+        console.log(\`Hello \${name}! You are \${age} years old.\`);
+        console.log("Input processing completed.");
+    });
 });`;
-    } else if (lang === "python") {
-      return `name = input("Enter your name: ")
+
+      case "python":
+        return `name = input("Enter your name: ")
 age = input("Enter your age: ")
 print(f"Hello {name}, you are {age} years old.")`;
+
+      case "html":
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My HTML Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .description {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to RunIt!</h1>
+        <p class="description">This is a live HTML preview.</p>
+    </div>
+</body>
+</html>`;
+
+      case "css":
+        return `.demo-element {
+    width: 200px;
+    height: 200px;
+    margin: 50px auto;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
     }
-    return "// Write your code here...";
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.demo-element:hover {
+    animation: none;
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}`;
+
+      default:
+        return "// Write your code here...";
+    }
   };
 
   // Update code when language changes
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
     setCode(getDefaultCode(newLang));
+    setOutput(''); // Clear output when changing languages
+    
+    // Clear any existing preview
+    const outputContainer = document.querySelector('#preview-container');
+    if (outputContainer) {
+      outputContainer.innerHTML = '';
+    }
   };
 
   return (
@@ -81,28 +186,39 @@ print(f"Hello {name}, you are {age} years old.")`;
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Panel - Code Editor */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <LanguageSelector language={language} setLanguage={handleLanguageChange} />
-              <RunButton onClick={executeCode} isExecuting={isExecuting} />
-            </div>
-            <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
-              <CodeEditor language={language} code={code} setCode={setCode} />
-            </div>
-          </div>
+      <div className="flex">
+        <Sidebar selectedLanguage={language} onLanguageSelect={handleLanguageChange} />
+        
+        <div className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Panel - Code Editor */}
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  <RunButton onClick={executeCode} isExecuting={isExecuting} />
+                </div>
+                <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+                  <CodeEditor language={language} code={code} setCode={setCode} />
+                </div>
+              </div>
 
-          {/* Right Panel - Input/Output */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-300">Console</h2>
-            <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
-              <OutputBox 
-                output={output}
-                input={input}
-                setInput={setInput}
-              />
+              {/* Right Panel - Input/Output */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold text-gray-300">
+                  {language === 'html' || language === 'css' ? 'Preview' : 'Console'}
+                </h2>
+                <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+                  {language === 'html' || language === 'css' ? (
+                    <div id="preview-container" className="bg-white h-[70vh]"></div>
+                  ) : (
+                    <OutputBox 
+                      output={output}
+                      input={input}
+                      setInput={setInput}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
