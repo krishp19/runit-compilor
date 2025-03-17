@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 
-const CodeEditor = ({ language, code, setCode }) => {
+const CodeEditor = ({ language, code, setCode, fontSize }) => {
   const [isEditorReady, setIsEditorReady] = useState(false);
 
   const handleEditorDidMount = () => {
@@ -23,27 +23,27 @@ const CodeEditor = ({ language, code, setCode }) => {
         </div>
       )}
       <Editor
-        height="100%"
+        height="calc(100vh - 16rem)"
         theme="vs-dark"
         language={language}
         value={code}
-        onChange={(newCode) => setCode(newCode)}
+        onChange={setCode}
         onMount={handleEditorDidMount}
         onValidate={handleEditorValidation}
-        options={{ 
-          fontSize: 14,
-          minimap: { enabled: true },
+        options={{
+          fontSize: fontSize,
+          minimap: { enabled: false },
           scrollBeyondLastLine: false,
+          wordWrap: 'on',
+          lineNumbers: 'on',
+          folding: true,
           automaticLayout: true,
+          tabSize: 2,
           formatOnPaste: true,
           formatOnType: true,
-          tabSize: 2,
-          wordWrap: "on",
-          lineNumbers: "on",
           renderWhitespace: "selection",
           suggestOnTriggerCharacters: true,
           quickSuggestions: true,
-          folding: true,
           foldingHighlight: true,
           foldingStrategy: 'auto',
           showFoldingControls: 'always',

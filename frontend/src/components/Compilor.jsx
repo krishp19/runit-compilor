@@ -6,6 +6,11 @@ import Sidebar from "./Sidebar";
 import OutputBox from "./OutputBox";
 import InputField from "./InputField";
 import RunButton from "./RunButton";
+import Navbar from "./Navbar";
+import EditorToolbar from "./EditorToolbar";
+
+// API URL with fallback
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 const Compiler = () => {
   const [language, setLanguage] = useState("javascript");
@@ -13,6 +18,8 @@ const Compiler = () => {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [isExecuting, setIsExecuting] = useState(false);
+  const [fontSize, setFontSize] = useState(14);
+  const [currentView, setCurrentView] = useState('compiler');
 
   const executeCode = async () => {
     try {
@@ -61,7 +68,11 @@ const Compiler = () => {
         .filter(line => line.trim() !== "")
         .join("\n");
 
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/code/execute`, {
+      if (!API_URL) {
+        throw new Error('API URL is not configured. Please check your environment variables.');
+      }
+
+      const response = await axios.post(`${API_URL}/code/execute`, {
         language,
         code,
         input: formattedInput,
@@ -69,7 +80,11 @@ const Compiler = () => {
       
       setOutput(response.data.output || response.data.error);
     } catch (error) {
-      setOutput("Error executing code: " + (error.response?.data?.message || error.message));
+      if (error.message.includes('API URL is not configured')) {
+        setOutput("Configuration Error: " + error.message);
+      } else {
+        setOutput("Error executing code: " + (error.response?.data?.message || error.message));
+      }
     } finally {
       setIsExecuting(false);
     }
@@ -192,16 +207,32 @@ print(f"Hello {name}, you are {age} years old.")`;
     }
   };
 
+  const handleSaveCode = () => {
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code.${language}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleViewChange = (view) => {
+    if (view === 'new') {
+      // Handle new file creation
+      setCode("// Write your code here...");
+      setOutput("");
+      setInput("");
+    } else {
+      setCurrentView(view);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 p-6">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-            RunIt Code Compiler
-          </h1>
-        </div>
-      </div>
+      <Navbar />
 
       {/* Main Content */}
       <div className="flex">
@@ -212,11 +243,22 @@ print(f"Hello {name}, you are {age} years old.")`;
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Panel - Code Editor */}
               <div className="space-y-4">
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                  <EditorToolbar
+                    fontSize={fontSize}
+                    onFontSizeChange={setFontSize}
+                    onSaveCode={handleSaveCode}
+                    onViewChange={handleViewChange}
+                  />
                   <RunButton onClick={executeCode} isExecuting={isExecuting} />
                 </div>
                 <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
-                  <CodeEditor language={language} code={code} setCode={setCode} />
+                  <CodeEditor 
+                    language={language} 
+                    code={code} 
+                    setCode={setCode}
+                    fontSize={fontSize}
+                  />
                 </div>
               </div>
 
