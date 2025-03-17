@@ -14,7 +14,7 @@ const Sidebar = ({ selectedLanguage, onLanguageSelect }) => {
   ];
 
   return (
-    <div className="w-20 bg-gray-900 border-r border-gray-700 flex flex-col items-center py-4 h-[calc(100vh-88px)]">
+    <div className="w-20 bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-700 flex flex-col items-center py-4 h-[calc(100vh-88px)]">
       <div 
         className="space-y-4 h-full overflow-y-auto pr-2 fancy-scrollbar"
       >
@@ -25,7 +25,7 @@ const Sidebar = ({ selectedLanguage, onLanguageSelect }) => {
             className={`w-16 p-3 rounded-lg flex flex-col items-center justify-center transition-all duration-300 relative ${
               selectedLanguage === lang.id
                 ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 scale-105'
-                : 'text-gray-400 hover:bg-gray-800 hover:text-white hover:shadow-md'
+                : 'text-gray-400 hover:bg-gray-700 hover:text-white hover:shadow-md'
             }`}
             title={`${lang.name}${!lang.supported ? ' (Coming Soon)' : ''}`}
           >

@@ -18,6 +18,8 @@ interface FormErrors {
   confirmPassword?: string;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
 export default function SignUpPage() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -73,18 +75,38 @@ export default function SignUpPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     setIsLoading(true);
+  
     try {
-      // Add your signup API call here
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
-      // Redirect to dashboard or show success message
-    } catch (error) {
-      console.error('Signup failed:', error);
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Signup failed');
+      }
+  
+      alert('Registered successfully! now you can login');
+      // Redirect to dashboard or login page
+      window.location.href = '/login';
+    } catch (error: any) {
+      setErrors({ email: error.message });
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center p-4 min-h-[calc(100vh-4rem)]">
