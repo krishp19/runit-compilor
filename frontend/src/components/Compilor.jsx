@@ -61,7 +61,7 @@ const Compiler = () => {
         .filter(line => line.trim() !== "")
         .join("\n");
 
-      const response = await axios.post("http://localhost:3001/api/code/execute", {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/code/execute`, {
         language,
         code,
         input: formattedInput,
