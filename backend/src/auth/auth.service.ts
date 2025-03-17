@@ -54,7 +54,7 @@ export class AuthService {
     }
   }
 
-  async signup(email: string, password: string) {
+  async signup(email: string, fullName: string, password: string) {
     try {
       const existingUser = await this.userService.findByEmail(email);
       if (existingUser) {
@@ -62,7 +62,11 @@ export class AuthService {
       }
       
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await this.userService.create({ email, password: hashedPassword });
+      const user = await this.userService.create({ 
+        email, 
+        fullName, 
+        password: hashedPassword 
+      });
       
       // Use spread operator directly on user if toObject() is not available
       const { password: _, ...result } = user instanceof Document 

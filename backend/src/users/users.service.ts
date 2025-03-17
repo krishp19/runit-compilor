@@ -7,7 +7,7 @@ import { User } from './user.entity';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async create(createUserDto: { email: string; password: string }): Promise<User> {
+  async create(createUserDto: { email: string; fullName: string; password: string }): Promise<User> {
     try {
       const createdUser = new this.userModel(createUserDto);
       return await createdUser.save();
