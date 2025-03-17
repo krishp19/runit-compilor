@@ -67,6 +67,7 @@ const Dropdown = ({ label, items, isMobile }) => {
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const mobileMenuRef = useRef(null);
 
   useEffect(() => {
@@ -83,11 +84,21 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     document.addEventListener('mousedown', handleClickOutside);
 
+    // Check for access token
+    const token = sessionStorage.getItem('access_token');
+    setIsLoggedIn(!!token);
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('access_token');
+    setIsLoggedIn(false);
+    // Optionally redirect or refresh the page
+  };
 
   const addDropdownItems = [
     { label: 'Source Editor', onClick: () => console.log('Source Editor clicked') },
@@ -168,18 +179,29 @@ const Navbar = () => {
             
             {/* Auth Buttons */}
             <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-gray-700">
-              <Link 
-                href="/login"
-                className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors"
+              {isLoggedIn ? (
+                <button 
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Log in
-              </Link>
-              <Link 
-                href="/signup"
-                className="px-3 py-1.5 text-sm text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
-              >
-                Sign up
-              </Link>
+                Logout
+              </button>
+              ) : (
+                <>
+                  <Link 
+                    href="/login"
+                    className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors"
+                  >
+                    Log in
+                  </Link>
+                  <Link 
+                    href="/signup"
+                    className="px-3 py-1.5 text-sm text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
