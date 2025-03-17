@@ -6,7 +6,11 @@ const Sidebar = ({ selectedLanguage, onLanguageSelect }) => {
     { id: 'css', name: 'CSS', icon: '🎨', supported: true },
     { id: 'java', name: 'Java', icon: '☕', supported: true },
     { id: 'cpp', name: 'C++', icon: '⚙️', supported: false },
-    { id: 'ruby', name: 'Ruby', icon: '💎', supported: false }
+    { id: 'ruby', name: 'Ruby', icon: '��', supported: false },
+    { id: 'go', name: 'Go', icon: '🐹', supported: false },
+    { id: 'php', name: 'PHP', icon: '🐘', supported: false },
+    { id: 'swift', name: 'Swift', icon: '🦅', supported: false },
+    { id: 'kotlin', name: 'Kotlin', icon: '☕', supported: false }
   ];
 
   return (

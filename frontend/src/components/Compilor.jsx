@@ -6,7 +6,6 @@ import Sidebar from "./Sidebar";
 import OutputBox from "./OutputBox";
 import InputField from "./InputField";
 import RunButton from "./RunButton";
-import Navbar from "./Navbar";
 import EditorToolbar from "./EditorToolbar";
 
 // API URL with fallback
@@ -96,7 +95,7 @@ const Compiler = () => {
       case "javascript":
         return `customReadline.question("Enter your name: ", function(name) {
     customReadline.question("Enter your age: ", function(age) {
-        console.log(\`Hello \${name}! You are \${age} years old.\`);
+        console.log(\`Hello \\${name}! You are \\${age} years old.\`);
         console.log("Input processing completed.");
     });
 });`;
@@ -231,52 +230,47 @@ print(f"Hello {name}, you are {age} years old.")`;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      <Navbar />
-
-      {/* Main Content */}
-      <div className="flex">
-        <Sidebar selectedLanguage={language} onLanguageSelect={handleLanguageChange} />
-        
-        <div className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Panel - Code Editor */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <EditorToolbar
-                    fontSize={fontSize}
-                    onFontSizeChange={setFontSize}
-                    onSaveCode={handleSaveCode}
-                    onViewChange={handleViewChange}
-                  />
-                  <RunButton onClick={executeCode} isExecuting={isExecuting} />
-                </div>
-                <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
-                  <CodeEditor 
-                    language={language} 
-                    code={code} 
-                    setCode={setCode}
-                    fontSize={fontSize}
-                  />
-                </div>
+    <div className="flex min-h-screen">
+      <Sidebar selectedLanguage={language} onLanguageSelect={handleLanguageChange} className="h-full flex flex-col" />
+      
+      <div className="flex-1 p-6 flex flex-col">
+        <div className="max-w-7xl mx-auto flex-grow">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Panel - Code Editor */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <EditorToolbar
+                  fontSize={fontSize}
+                  onFontSizeChange={setFontSize}
+                  onSaveCode={handleSaveCode}
+                  onViewChange={handleViewChange}
+                />
+                <RunButton onClick={executeCode} isExecuting={isExecuting} />
               </div>
+              <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+                <CodeEditor 
+                  language={language} 
+                  code={code} 
+                  setCode={setCode}
+                  fontSize={fontSize}
+                />
+              </div>
+            </div>
 
-              {/* Right Panel - Input/Output */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-300">
-                  {language === 'html' || language === 'css' ? 'Preview' : 'Console'}
-                </h2>
-                <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
-                  {language === 'html' || language === 'css' ? (
-                    <div id="preview-container" className="bg-white h-[calc(100vh-12rem)]"></div>
-                  ) : (
-                    <div className="flex flex-col space-y-4">
-                      <InputField input={input} setInput={setInput} />
-                      <OutputBox output={output} />
-                    </div>
-                  )}
-                </div>
+            {/* Right Panel - Input/Output */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-300">
+                {language === 'html' || language === 'css' ? 'Preview' : 'Console'}
+              </h2>
+              <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+                {language === 'html' || language === 'css' ? (
+                  <div id="preview-container" className="bg-white h-[calc(100vh-12rem)]"></div>
+                ) : (
+                  <div className="flex flex-col space-y-4">
+                    <InputField input={input} setInput={setInput} />
+                    <OutputBox output={output} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
