@@ -230,15 +230,15 @@ print(f"Hello {name}, you are {age} years old.")`;
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-900">
       <Sidebar selectedLanguage={language} onLanguageSelect={handleLanguageChange} className="h-full flex flex-col" />
       
       <div className="flex-1 p-6 flex flex-col">
-        <div className="max-w-7xl mx-auto flex-grow">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="max-w-7xl mx-auto flex-grow w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Panel - Code Editor */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
+            <div className="space-y-0 flex flex-col">
+              <div className="flex justify-between items-center bg-[#1a1f2e] p-3 rounded-t-lg">
                 <EditorToolbar
                   fontSize={fontSize}
                   onFontSizeChange={setFontSize}
@@ -247,7 +247,7 @@ print(f"Hello {name}, you are {age} years old.")`;
                 />
                 <RunButton onClick={executeCode} isExecuting={isExecuting} />
               </div>
-              <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+              <div className="rounded-b-lg overflow-hidden border-x border-b border-gray-700 shadow-lg">
                 <CodeEditor 
                   language={language} 
                   code={code} 
@@ -258,11 +258,13 @@ print(f"Hello {name}, you are {age} years old.")`;
             </div>
 
             {/* Right Panel - Input/Output */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-300">
-                {language === 'html' || language === 'css' ? 'Preview' : 'Console'}
-              </h2>
-              <div className="rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+            <div className="space-y-0 flex flex-col">
+              <div className="bg-[#1a1f2e] p-3 rounded-t-lg">
+                <h2 className="text-xl font-semibold text-gray-300">
+                  {language === 'html' || language === 'css' ? 'Preview' : 'Console'}
+                </h2>
+              </div>
+              <div className="rounded-b-lg overflow-hidden border-x border-b border-gray-700 shadow-lg">
                 {language === 'html' || language === 'css' ? (
                   <div id="preview-container" className="bg-white h-[calc(100vh-12rem)]"></div>
                 ) : (
